@@ -3,8 +3,6 @@
 
 # Except these files
 !*.gitignore
-!*.vimrc
-!*.vim
 !*.zsh_aliases
 !*.zshrc
 
