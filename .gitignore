@@ -5,5 +5,7 @@
 !*.gitignore
 !*.vimrc
 !*.vim
+!*.zsh_aliases
+!*.zshrc
 
 # etc...

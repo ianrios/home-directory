@@ -1,0 +1,138 @@
+# Colors
+
+BLACK='\033[0;30m'
+DARKGREY='\033[1;30m'
+RED='\033[0;31m'
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'
+LIGHTGREEN='\033[1;32m'
+BROWNORANGE='\033[0;33m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
+
+# Functions
+
+# git pull origin develop (switch to develop if not already on, then switch back and merge)
+git_pull_origin_develop() {
+    # save current branch name
+    BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+    if [[ "$BRANCH" != "develop" ]]; then
+        # branch is not develop, checkout develop
+        git checkout develop
+    fi
+    # branch is develop
+    git pull origin develop
+    if [[ "$BRANCH" != "develop" ]]; then
+        # branch was not develop, checkout to original branch
+        git checkout $BRANCH
+        # merge develop in without requiring custom commit message
+        # (it's a simple merge of develop into feature branch, no edit needed)
+        git merge develop --no-edit
+    fi
+}
+
+new_branch_naming_conventions_usage() {
+    echo "Branching strategy failed; pattern not matched."
+    echo -e "Must supply three arguments, branch type, branch name, and branch title (e.g, grtb ${GREEN}feature${NC} ${BLUE}UX${NC}${RED}-${NC}${BLUE}123${NC} ${WHITE}new-ux-improvement${NC})"
+    echo -e "- Where branch type should match one of type ${GREEN}feature${NC}|${YELLOW}bugfix${NC}|${BLUE}release${NC}|${RED}hotfix${NC}|${PURPLE}chore${NC}"
+    echo -e "- Where branch name should match format ${BLUE}B4C${NC}${RED}-${NC}${BLUE}12345${NC}"
+    echo -e "- Where branch title should match format ${WHITE}new-feature${NC})"
+    echo ""
+    return
+}
+
+# create new branch, switch to it, and link remote to origin
+git_remote_tracking_branch() {
+    # make sure we have three arguments
+    if [ $# -ne 3 ]; then
+        echo -e "${YELLOW}ERROR:${NC}${RED} $# ${NC}arguments provided, expected exactly three ${GREEN}3${NC}"
+        new_branch_naming_conventions_usage
+        return
+    fi
+    # save branch from command line
+    BRANCH_TYPE="$1"
+    BRANCH_NAME="$2"
+    BRANCH_TITLE="$3"
+    # check to make sure new branch follows Built conventions
+    if ! [[ "$BRANCH_TYPE" =~ ^(feature|bugfix|release|hotfix|chore)$ ]]; then
+        echo -e "${YELLOW}ERROR:${NC} branch type ${RED}'$BRANCH_TYPE'${NC} does not match avaliable types"
+        new_branch_naming_conventions_usage
+        return
+    fi
+    if ! [[ "$BRANCH_NAME" =~ [A-Za-z0-9]+-[0-9]+ ]]; then
+        echo -e "${YELLOW}ERROR:${NC} branch name ${RED}'$BRANCH_NAME'${NC} does not match match regex"
+        new_branch_naming_conventions_usage
+        return
+    fi
+    if ! [[ "$BRANCH_TITLE" =~ [-A-Za-z]+ ]]; then
+        echo -e "${YELLOW}ERROR:${NC} branch title ${RED}'$BRANCH_TITLE'${NC} does not match match regex"
+        new_branch_naming_conventions_usage
+        return
+    fi
+
+    # passed each if statement, good to create branch & push
+    # create branch to use for checkout
+    BRANCH="$BRANCH_TYPE/$BRANCH_NAME-$BRANCH_TITLE"
+    # actually create and check out the new branch
+    git checkout -b $BRANCH
+    # set first commit
+    git commit --allow-empty -m "$BRANCH_NAME :: $BRANCH_TITLE"
+    # set upstream
+    git push -u origin $BRANCH
+}
+
+# git commit with message, then push to origin
+git_commit_push_origin() {
+    if [ $# -eq 0 ]; then
+        # make sure git message is supplied
+        echo "No commit message supplied, make sure to use quotes and do not include '&'"
+        return
+    fi
+    # save commit message from command line
+    COMMIT_MESSAGE="$1"
+    git commit -m $COMMIT_MESSAGE
+    git push
+}
+
+# Aliases
+
+# replace code-insiders with code to easily open new repo
+alias code="code-insiders"
+
+# color code and list all files
+alias ls="ls -A --color=auto -h"
+
+# what is my ip
+alias myip='curl ipinfo.io/ip'
+
+# make parent directory if it doesnt exist
+alias mkdir='mkdir -p'
+
+# short form clear terminal
+alias c='clear'
+
+# show and color code all branches
+alias branches='git for-each-ref --sort=-committerdate --format="%(color:blue)%(authordate:relative)%09%(color:red)%(authorname)%09%(color:white)%(color:bold)%(refname:short)" refs/remotes'
+
+# git add only updated tracked files (not new files) via patch mode one change at a time
+alias gaps="git add -up"
+
+# git commit with message and then push to origin
+alias gcpo=git_commit_push_origin
+
+# git create new branch and link remote tracking branch
+alias grtb=git_remote_tracking_branch
+
+# git pull origin develop
+alias gpod=git_pull_origin_develop
+
+# [alias]
+#     set-upstream = !git branch --set-upstream-to=origin/`git symbolic-ref --short HEAD`
