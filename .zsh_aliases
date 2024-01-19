@@ -121,6 +121,7 @@ alias c='clear'
 
 # show and color code all branches
 alias branches='git for-each-ref --sort=-committerdate --format="%(color:blue)%(authordate:relative)%09%(color:red)%(authorname)%09%(color:white)%(color:bold)%(refname:short)" refs/remotes'
+alias blocal='git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
 
 # git add only updated tracked files (not new files) via patch mode one change at a time
 alias gaps="git add -up"
@@ -134,5 +135,16 @@ alias grtb=git_remote_tracking_branch
 # git pull origin develop
 alias gpod=git_pull_origin_develop
 
-# [alias]
-#     set-upstream = !git branch --set-upstream-to=origin/`git symbolic-ref --short HEAD`
+# minimized git log
+alias glog="git log --pretty=format:'%C(yellow)%h %Cred%ad  %Creset%s' --date=local"
+
+# git log but the timeline graph version
+alias ggraph='git log --oneline --decorate --graph --all'
+
+# Built specific
+
+# check for npm updates via npx
+alias ncu="npx npm-check-updates"
+
+# check for built updates
+alias updatebuilt="ncu -u ‘/^@built/'"
