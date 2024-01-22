@@ -37,6 +37,7 @@ git_pull_origin_develop() {
         # (it's a simple merge of develop into feature branch, no edit needed)
         git merge develop --no-edit
     fi
+    return
 }
 
 new_branch_naming_conventions_usage() {
@@ -83,10 +84,17 @@ git_remote_tracking_branch() {
     BRANCH="$BRANCH_TYPE/$BRANCH_NAME-$BRANCH_TITLE"
     # actually create and check out the new branch
     git checkout -b $BRANCH
+    # replace the title with spaces
+    BRANCH_TITLE_SPACES="${BRANCH_TITLE//-/ }"
     # set first commit
-    git commit --allow-empty -m "$BRANCH_NAME :: $BRANCH_TITLE"
+    git commit --allow-empty -m "$BRANCH_NAME :: $BRANCH_TITLE_SPACES"
     # set upstream
     git push -u origin $BRANCH
+    # note for developer to go create new PR right away
+    echo "Go create a PR in the repo now in order to save your title in the PR easilly"
+    # open current branch
+    open-repo
+    return
 }
 
 # git commit with message, then push to origin
@@ -100,9 +108,16 @@ git_commit_push_origin() {
     COMMIT_MESSAGE="$1"
     git commit -m $COMMIT_MESSAGE
     git push
+    return
 }
 
 # Aliases
+
+# short form alias
+alias a='clear && alias'
+
+# short form source ~/.zshrc
+alias sz='source ~/.zshrc'
 
 # replace code-insiders with code to easily open new repo
 alias code="code-insiders"
@@ -118,6 +133,9 @@ alias mkdir='mkdir -p'
 
 # short form clear terminal
 alias c='clear'
+
+# short form git status
+alias gs='git status'
 
 # show and color code all branches
 alias branches='git for-each-ref --sort=-committerdate --format="%(color:blue)%(authordate:relative)%09%(color:red)%(authorname)%09%(color:white)%(color:bold)%(refname:short)" refs/remotes'
@@ -141,10 +159,16 @@ alias glog="git log --pretty=format:'%C(yellow)%h %Cred%ad  %Creset%s' --date=lo
 # git log but the timeline graph version
 alias ggraph='git log --oneline --decorate --graph --all'
 
+# open current repo in browser
+alias open-repo="tw git open"
+
 # Built specific
 
 # check for npm updates via npx
 alias ncu="npx npm-check-updates"
 
 # check for built updates
-alias updatebuilt="ncu -u ‘/^@built/'"
+alias updatebuilt="ncu -u '/^@built/'"
+
+# short form update built
+alias ub="updatebuilt"
