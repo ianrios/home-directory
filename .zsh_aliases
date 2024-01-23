@@ -1,5 +1,6 @@
-# Colors
+# Constants
 
+# Colors
 BLACK='\033[0;30m'
 DARKGREY='\033[1;30m'
 RED='\033[0;31m'
@@ -17,6 +18,10 @@ LIGHTCYAN='\033[1;36m'
 LIGHTGRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
+
+# Protected branches (do not add changes to these branches)
+PROTECTED_BRANCHES=("develop" "staging" "qa" "production" "master" "merge-queue")
+# TODO: add more protected branches to array
 
 # Functions
 
@@ -41,6 +46,18 @@ test_colors() {
     echo -e "${LIGHTGRAY}LIGHTGRAY${NC}"
     echo -e "${WHITE}WHITE${NC}"
     return
+}
+
+is_branch_protected() {
+    # check to make sure we arent on any protected branches
+    CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+    if [[ ${PROTECTED_BRANCHES[@]} =~ $CURRENT_BRANCH ]]; then
+        # we were on a protected branch, return true
+        echo -e "${RED}ERROR:${NC} branch is protected; switch branches and try again."
+        return 0
+    fi
+    # the branch is not protected, return false
+    return 1
 }
 
 # git pull origin develop (switch to develop if not already on, then switch back and merge)
@@ -133,15 +150,31 @@ git_remote_tracking_branch() {
 
 # git commit with message, then push to origin
 git_commit_push_origin() {
+    # check if git message supplied
     if [ $# -eq 0 ]; then
-        # make sure git message is supplied
+        # no message
         echo "No commit message supplied, make sure to use quotes and do not include '&'"
         return
     fi
+
+    # check if branch is protected
+    if is_branch_protected; then return; fi
+    # we can commit to this branch, so continue
+
     # save commit message from command line
     COMMIT_MESSAGE="$1"
     git commit -m $COMMIT_MESSAGE
     git push
+    return
+}
+
+git_add_updates_patch() {
+    # check if branch is protected
+    if is_branch_protected; then return; fi
+    # we can add to this branch, so continue
+
+    # add updated files that are currently tracked via patch mode
+    git add -up
     return
 }
 
@@ -183,7 +216,7 @@ alias branches='git for-each-ref --sort=-committerdate --format="%(color:blue)%(
 alias blocal='git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
 
 # git add only updated tracked files (not new files) via patch mode one change at a time
-alias gaps="git add -up"
+alias gaps=git_add_updates_patch
 
 # git commit with message and then push to origin
 alias gcpo=git_commit_push_origin
