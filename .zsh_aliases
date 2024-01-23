@@ -147,8 +147,6 @@ git_commit_push_origin() {
 
 # welcome message on open of new zsh terminal
 welcome() {
-    # clear
-    c
     # welcome message
     echo -e "Don't forget to use your aliases!\nRun ${CYAN}\e[4m\e[3ma\e[0m${NC} to remember what they all are!"
     return
