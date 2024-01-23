@@ -87,7 +87,7 @@ git_remote_tracking_branch() {
     # replace the title with spaces
     BRANCH_TITLE_SPACES="${BRANCH_TITLE//-/ }"
     # set first commit
-    git commit --allow-empty -m "$BRANCH_NAME :: $BRANCH_TITLE_SPACES"
+    git commit --allow-empty -m "$BRANCH_NAME - $BRANCH_TITLE_SPACES"
     # set upstream
     git push -u origin $BRANCH
     # note for developer to go create new PR right away
