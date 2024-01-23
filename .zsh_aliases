@@ -80,16 +80,27 @@ git_remote_tracking_branch() {
     fi
 
     # passed each if statement, good to create branch & push
+    echo "Passed checks!"
+    # always base new branch off of develop
+    # check if we are currently on develop
+    echo "Basing new branch off of develop"
+    CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+    if [[ "$CURRENT_BRANCH" != "develop" ]]; then
+        # branch is not develop, checkout develop
+        git checkout develop
+    fi
+    # branch is now confirmed to be develop, pulling recent changes
+    git pull origin develop
     # create branch to use for checkout
-    BRANCH="$BRANCH_TYPE/$BRANCH_NAME-$BRANCH_TITLE"
+    NEW_BRANCH="$BRANCH_TYPE/$BRANCH_NAME-$BRANCH_TITLE"
     # actually create and check out the new branch
-    git checkout -b $BRANCH
+    git checkout -b $NEW_BRANCH
     # replace the title with spaces
     BRANCH_TITLE_SPACES="${BRANCH_TITLE//-/ }"
     # set first commit
     git commit --allow-empty -m "$BRANCH_NAME - $BRANCH_TITLE_SPACES"
     # set upstream
-    git push -u origin $BRANCH
+    git push -u origin $NEW_BRANCH
     # note for developer to go create new PR right away
     echo "Go create a PR in the repo now in order to save your title in the PR easilly"
     # open current branch
