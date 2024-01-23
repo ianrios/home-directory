@@ -20,6 +20,29 @@ NC='\033[0m' # No Color
 
 # Functions
 
+# test colors
+test_colors() {
+    c
+    echo "Testing colors"
+    echo -e "${BLACK}BLACK${NC}"
+    echo -e "${DARKGREY}DARKGREY${NC}"
+    echo -e "${RED}RED${NC}"
+    echo -e "${LIGHTRED}LIGHTRED${NC}"
+    echo -e "${GREEN}GREEN${NC}"
+    echo -e "${LIGHTGREEN}LIGHTGREEN${NC}"
+    echo -e "${BROWNORANGE}BROWNORANGE${NC}"
+    echo -e "${YELLOW}YELLOW${NC}"
+    echo -e "${BLUE}BLUE${NC}"
+    echo -e "${LIGHTBLUE}LIGHTBLUE${NC}"
+    echo -e "${PURPLE}PURPLE${NC}"
+    echo -e "${LIGHTPURPLE}LIGHTPURPLE${NC}"
+    echo -e "${CYAN}CYAN${NC}"
+    echo -e "${LIGHTCYAN}LIGHTCYAN${NC}"
+    echo -e "${LIGHTGRAY}LIGHTGRAY${NC}"
+    echo -e "${WHITE}WHITE${NC}"
+    return
+}
+
 # git pull origin develop (switch to develop if not already on, then switch back and merge)
 git_pull_origin_develop() {
     # save current branch name
@@ -80,10 +103,10 @@ git_remote_tracking_branch() {
     fi
 
     # passed each if statement, good to create branch & push
-    echo "Passed checks!"
+    echo -e "${LIGHTGREEN}Passed checks!${NC}"
     # always base new branch off of develop
     # check if we are currently on develop
-    echo "Basing new branch off of develop"
+    echo "> Basing new branch off of develop"
     CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
     if [[ "$CURRENT_BRANCH" != "develop" ]]; then
         # branch is not develop, checkout develop
@@ -102,7 +125,7 @@ git_remote_tracking_branch() {
     # set upstream
     git push -u origin $NEW_BRANCH
     # note for developer to go create new PR right away
-    echo "Go create a PR in the repo now in order to save your title in the PR easilly"
+    echo -e "${WHITE}Go create a PR in the repo now in order to save your branch title easilly${NC}"
     # open current branch
     open-repo
     return
@@ -119,6 +142,15 @@ git_commit_push_origin() {
     COMMIT_MESSAGE="$1"
     git commit -m $COMMIT_MESSAGE
     git push
+    return
+}
+
+# welcome message on open of new zsh terminal
+welcome() {
+    # clear
+    c
+    # welcome message
+    echo -e "Don't forget to use your aliases!\nRun ${CYAN}\e[4m\e[3ma\e[0m${NC} to remember what they all are!"
     return
 }
 
