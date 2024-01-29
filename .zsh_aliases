@@ -48,6 +48,7 @@ test_colors() {
     return
 }
 
+# check if branch is in PROTECTED_BRANCHES array
 is_branch_protected() {
     # check to make sure we arent on any protected branches
     CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -80,6 +81,7 @@ git_pull_origin_develop() {
     return
 }
 
+# naming convention usage
 new_branch_naming_conventions_usage() {
     echo "Branching strategy failed; pattern not matched."
     echo -e "Must supply three arguments, branch type, branch name, and branch title (e.g, grtb ${GREEN}feature${NC} ${BLUE}UX${NC}${RED}-${NC}${BLUE}123${NC} ${WHITE}new-ux-improvement${NC})"
@@ -143,8 +145,10 @@ git_remote_tracking_branch() {
     git push -u origin $NEW_BRANCH
     # note for developer to go create new PR right away
     echo -e "${WHITE}Go create a PR in the repo now in order to save your branch title easilly${NC}"
+    echo -e "${WHITE}Run ${NC}${LIGHTPURPLE}open-repo${NC}${WHITE} to access this branch on github.com in the command line${NC}"
+
     # open current branch
-    open-repo
+    tw git open
     return
 }
 
@@ -168,6 +172,7 @@ git_commit_push_origin() {
     return
 }
 
+# git add updates in patch mode
 git_add_updates_patch() {
     # check if branch is protected
     if is_branch_protected; then return; fi
@@ -246,3 +251,6 @@ alias updatebuilt="ncu -u '/^@built/'"
 
 # short form update built
 alias ub="updatebuilt"
+
+# aws login
+alias sso="AWS_PROFILE=dev-developer aws sso login"
