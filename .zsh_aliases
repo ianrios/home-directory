@@ -169,6 +169,15 @@ git_commit_push_origin() {
     COMMIT_MESSAGE="$1"
     git commit -m $COMMIT_MESSAGE
     git push
+
+    # ask if we want to run tests
+    echo -e "${YELLOW}Would you like to run tests? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) npm run test ;;
+    [Nn]*) exit ;;
+    *) echo "Please answer yes or no." ;;
+    esac
     return
 }
 
