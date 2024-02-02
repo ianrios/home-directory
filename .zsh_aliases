@@ -184,9 +184,10 @@ git_commit_push_origin() {
     read yn
     case $yn in
     [Yy]*) npm run test ;;
-    [Nn]*) return ;;
+    [Nn]*) echo "Skipped running tests" ;;
     *) echo "Please answer yes or no." ;;
     esac
+
     return
 }
 
