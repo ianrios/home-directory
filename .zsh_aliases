@@ -170,12 +170,21 @@ git_commit_push_origin() {
     git commit -m $COMMIT_MESSAGE
     git push
 
+    # ask if we want to pull develop
+    echo -e "${YELLOW}Would you like to pull newest changes in from develop? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) git_pull_origin_develop && git push ;;
+    [Nn]*) echo "Skipped pulling in changes" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
     # ask if we want to run tests
     echo -e "${YELLOW}Would you like to run tests? (Yes/No)${NC}"
     read yn
     case $yn in
     [Yy]*) npm run test ;;
-    [Nn]*) exit ;;
+    [Nn]*) return ;;
     *) echo "Please answer yes or no." ;;
     esac
     return
@@ -189,6 +198,11 @@ git_add_updates_patch() {
 
     # add updated files that are currently tracked via patch mode
     git add -up
+
+    # run git status
+    git status
+
+    echo "If there are changes listed above in green, run ${PURPLE}gcpo \"with a message\"${NC} to commit and push to your origin branch"
     return
 }
 
