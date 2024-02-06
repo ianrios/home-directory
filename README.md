@@ -1,7 +1,8 @@
 # Ian Rios's Home Directory
 
-Depends on Z Shell (Zsh)
-- To use on bash rename .zshrc to .bashrc & replace any broken Zsh commands with Bash commands (TODO)
+All scripts built to run on Z Shell (Zsh)
+
+- *To use on bash rename .zshrc to .bashrc & replace any broken Zsh commands with Bash commands (TODO)*
 
 ### Includes the following useful features
 
