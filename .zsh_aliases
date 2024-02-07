@@ -78,6 +78,9 @@ git_pull_origin_develop() {
         # (it's a simple merge of develop into feature branch, no edit needed)
         git merge develop --no-edit
     fi
+
+    echo "${GREEN}Done${NC}"
+
     return
 }
 
@@ -145,10 +148,13 @@ git_remote_tracking_branch() {
     git push -u origin $NEW_BRANCH
     # note for developer to go create new PR right away
     echo -e "${WHITE}Go create a PR in the repo now in order to save your branch title easilly${NC}"
-    echo -e "${WHITE}Run ${NC}${LIGHTPURPLE}open-repo${NC}${WHITE} to access this branch on github.com in the command line${NC}"
+    echo -e "${WHITE}Run ${NC}${LIGHTCYAN}open-repo${NC}${WHITE} to access this branch on github.com in the command line${NC}"
 
     # open current branch
     tw git open
+
+    echo "${GREEN}Done${NC}"
+
     return
 }
 
@@ -188,6 +194,8 @@ git_commit_push_origin() {
     *) echo "Please answer yes or no." ;;
     esac
 
+    echo "${GREEN}Done${NC}"
+
     return
 }
 
@@ -203,14 +211,46 @@ git_add_updates_patch() {
     # run git status
     git status
 
-    echo "If there are changes listed above in green, run ${PURPLE}gcpo \"with a message\"${NC} to commit and push to your origin branch"
+    echo "If there are changes listed above in green, run ${LIGHTCYAN}gcpo \"with a message\"${NC} to commit and push to your origin branch"
+
+    echo "${GREEN}Done${NC}"
+
     return
 }
 
+# pull, nvm use, install, and generate schema
+pull_use_install_generate() {
+    # pull latest changes
+    echo "${PURPLE}Pulling latest changes${NC}"
+    gpod
+    # use correct node version
+    echo "${PURPLE}Using correct node version${NC}"
+    nvm use
+    # install latest packages
+    echo "${PURPLE}Installing latest packages${NC}"
+    echo "${YELLOW}If this hangs, you need to connect to the VPN via Tunnelblick${NC}"
+    npm i
+    # generate schema
+    echo "${PURPLE}Generating schema${NC}"
+    npm run generate
+
+     # ask if we want to run app
+    echo -e "${YELLOW}Would you like to start the app via ${LIGHTCYAN}npm run start${YELLOW}? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) npm run start ;;
+    [Nn]*) echo "Skipped starting app" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
+    echo "${GREEN}Done${NC}"
+
+    return
+}
 # welcome message on open of new zsh terminal
 welcome() {
     # welcome message
-    echo -e "Don't forget to use your aliases!\nRun ${CYAN}\e[4m\e[3ma\e[0m${NC} to remember what they all are!"
+    echo -e "Don't forget to use your aliases!\nRun ${LIGHTCYAN}\e[4m\e[3ma\e[0m${NC} to remember what they all are!"
     return
 }
 
@@ -278,3 +318,6 @@ alias ub="updatebuilt"
 
 # aws login
 alias sso="AWS_PROFILE=dev-developer aws sso login"
+
+# pull, nvm use, install, and generate schema
+alias prepare=pull_use_install_generate
