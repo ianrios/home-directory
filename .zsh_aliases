@@ -79,7 +79,7 @@ git_pull_origin_develop() {
         git merge develop --no-edit
     fi
 
-    echo "${GREEN}Done${NC}"
+    echo -e "${GREEN}Done${NC}"
 
     return
 }
@@ -153,7 +153,7 @@ git_remote_tracking_branch() {
     # open current branch
     tw git open
 
-    echo "${GREEN}Done${NC}"
+    echo -e "${GREEN}Done${NC}"
 
     return
 }
@@ -163,7 +163,7 @@ git_commit_push_origin() {
     # check if git message supplied
     if [ $# -eq 0 ]; then
         # no message
-        echo "No commit message supplied, make sure to use quotes and do not include '&'"
+        echo -e "${YELLOW}ERROR:${NC} No commit message supplied, make sure to use quotes and do not include special characters like ${LIGHTCYAN}'&'${NC}"
         return
     fi
 
@@ -194,7 +194,7 @@ git_commit_push_origin() {
     *) echo "Please answer yes or no." ;;
     esac
 
-    echo "${GREEN}Done${NC}"
+    echo -e "${GREEN}Done${NC}"
 
     return
 }
@@ -211,9 +211,9 @@ git_add_updates_patch() {
     # run git status
     git status
 
-    echo "If there are changes listed above in green, run ${LIGHTCYAN}gcpo \"with a message\"${NC} to commit and push to your origin branch"
+    echo -e "If there are changes listed above in green, run ${LIGHTCYAN}gcpo \"with a message\"${NC} to commit and push to your origin branch"
 
-    echo "${GREEN}Done${NC}"
+    echo -e "${GREEN}Done${NC}"
 
     return
 }
@@ -221,20 +221,20 @@ git_add_updates_patch() {
 # pull, nvm use, install, and generate schema
 pull_use_install_generate() {
     # pull latest changes
-    echo "${PURPLE}Pulling latest changes${NC}"
+    echo -e "${PURPLE}Pulling latest changes${NC}"
     gpod
     # use correct node version
-    echo "${PURPLE}Using correct node version${NC}"
+    echo -e "${PURPLE}Using correct node version${NC}"
     nvm use
     # install latest packages
-    echo "${PURPLE}Installing latest packages${NC}"
-    echo "${YELLOW}If this hangs, you need to connect to the VPN via Tunnelblick${NC}"
+    echo -e "${PURPLE}Installing latest packages${NC}"
+    echo -e "${YELLOW}If this hangs, you need to connect to the VPN via Tunnelblick${NC}"
     npm i
     # generate schema
-    echo "${PURPLE}Generating schema${NC}"
+    echo -e "${PURPLE}Generating schema${NC}"
     npm run generate
 
-     # ask if we want to run app
+    # ask if we want to run app
     echo -e "${YELLOW}Would you like to start the app via ${LIGHTCYAN}npm run start${YELLOW}? (Yes/No)${NC}"
     read yn
     case $yn in
@@ -243,10 +243,34 @@ pull_use_install_generate() {
     *) echo "Please answer yes or no." ;;
     esac
 
-    echo "${GREEN}Done${NC}"
+    echo -e "${GREEN}Done${NC}"
 
     return
 }
+
+# aws login choose profile
+aws_login_choose_profile() {
+    if [ $# -eq 0 ]; then
+        echo -e "${YELLOW}ERROR:${NC} No arguments supplied, make sure to use ${LIGHTCYAN}d${NC} for ${PURPLE}'dev-developer'${NC} or ${LIGHTCYAN}k${NC} for ${PURPLE}'eksdev'${NC}"
+        return
+    fi
+    # use d or k for the arguments to login to dev-developer or eksdev
+    if [ "$1" = "d" ]; then
+        echo -e "Logging into aws using ${LIGHTCYAN}dev-developer${NC} profile"
+        AWS_PROFILE=dev-developer aws sso login
+    elif [ "$1" = "k" ]; then
+        echo -e "Logging into aws using ${LIGHTCYAN}eksdev${NC} profile"
+        aws sso login --profile eksdev && aws sts get-caller-identity --profile eksdev
+    else
+        echo -e "${YELLOW}ERROR:${NC} Invalid Argument, make sure to use ${LIGHTCYAN}d${NC} for ${PURPLE}'dev-developer'${NC} or ${LIGHTCYAN}k${NC} for ${PURPLE}'eksdev'${NC}"
+        return
+    fi
+
+    echo -e "${GREEN}Done${NC}"
+
+    return
+}
+
 # welcome message on open of new zsh terminal
 welcome() {
     # welcome message
@@ -317,7 +341,7 @@ alias updatebuilt="ncu -u '/^@built/'"
 alias ub="updatebuilt"
 
 # aws login
-alias sso="AWS_PROFILE=dev-developer aws sso login"
+alias sso=aws_login_choose_profile
 
 # pull, nvm use, install, and generate schema
 alias prepare=pull_use_install_generate
