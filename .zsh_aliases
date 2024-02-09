@@ -1,23 +1,6 @@
 # Constants
 
-# Colors
-BLACK='\033[0;30m'
-DARKGREY='\033[1;30m'
-RED='\033[0;31m'
-LIGHTRED='\033[1;31m'
-GREEN='\033[0;32m'
-LIGHTGREEN='\033[1;32m'
-BROWNORANGE='\033[0;33m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-LIGHTBLUE='\033[1;34m'
-PURPLE='\033[0;35m'
-LIGHTPURPLE='\033[1;35m'
-CYAN='\033[0;36m'
-LIGHTCYAN='\033[1;36m'
-LIGHTGRAY='\033[0;37m'
-WHITE='\033[1;37m'
-NC='\033[0m' # No Color
+# TODO: split out built specific actions to new file
 
 # Protected branches (do not add changes to these branches)
 PROTECTED_BRANCHES=("develop" "staging" "qa" "production" "master" "merge-queue")
@@ -25,27 +8,22 @@ PROTECTED_BRANCHES=("develop" "staging" "qa" "production" "master" "merge-queue"
 
 # Functions
 
-# test colors
-test_colors() {
+# git log with minimal information
+minimal_git_log() {
     c
-    echo "Testing colors"
-    echo -e "${BLACK}BLACK${NC}"
-    echo -e "${DARKGREY}DARKGREY${NC}"
-    echo -e "${RED}RED${NC}"
-    echo -e "${LIGHTRED}LIGHTRED${NC}"
-    echo -e "${GREEN}GREEN${NC}"
-    echo -e "${LIGHTGREEN}LIGHTGREEN${NC}"
-    echo -e "${BROWNORANGE}BROWNORANGE${NC}"
-    echo -e "${YELLOW}YELLOW${NC}"
-    echo -e "${BLUE}BLUE${NC}"
-    echo -e "${LIGHTBLUE}LIGHTBLUE${NC}"
-    echo -e "${PURPLE}PURPLE${NC}"
-    echo -e "${LIGHTPURPLE}LIGHTPURPLE${NC}"
-    echo -e "${CYAN}CYAN${NC}"
-    echo -e "${LIGHTCYAN}LIGHTCYAN${NC}"
-    echo -e "${LIGHTGRAY}LIGHTGRAY${NC}"
-    echo -e "${WHITE}WHITE${NC}"
-    return
+    git log --pretty=format:'%C(yellow)%h %Cred%ad  %Creset%s' --date=local
+}
+
+# show and color code all available branches
+show_all_branches() {
+    c
+    git for-each-ref --sort=-committerdate --format="%(color:blue)%(authordate:relative)%09%(color:red)%(authorname)%09%(color:white)%(color:bold)%(refname:short)" refs/remotes
+}
+
+# show and color code all local branches
+show_local_branches() {
+    c
+    git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"
 }
 
 # check if branch is in PROTECTED_BRANCHES array
@@ -213,6 +191,15 @@ git_add_updates_patch() {
 
     echo -e "If there are changes listed above in green, run ${LIGHTCYAN}gcpo \"with a message\"${NC} to commit and push to your origin branch"
 
+    # commit all new files one at a time
+    echo -e "${YELLOW}Would you like to add new files? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) git add -N . ;;
+    [Nn]*) echo "Skipped adding new files" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
     echo -e "${GREEN}Done${NC}"
 
     return
@@ -261,6 +248,8 @@ aws_login_choose_profile() {
     elif [ "$1" = "k" ]; then
         echo -e "Logging into aws using ${LIGHTCYAN}eksdev${NC} profile"
         aws sso login --profile eksdev && aws sts get-caller-identity --profile eksdev
+        echo "Connecting to eksdev cluster"
+        k8-connect
     else
         echo -e "${YELLOW}ERROR:${NC} Invalid Argument, make sure to use ${LIGHTCYAN}d${NC} for ${PURPLE}'dev-developer'${NC} or ${LIGHTCYAN}k${NC} for ${PURPLE}'eksdev'${NC}"
         return
@@ -304,9 +293,11 @@ alias c='clear'
 # short form git status
 alias gs='git status'
 
-# show and color code all branches
-alias branches='git for-each-ref --sort=-committerdate --format="%(color:blue)%(authordate:relative)%09%(color:red)%(authorname)%09%(color:white)%(color:bold)%(refname:short)" refs/remotes'
-alias blocal='git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
+# show and color code all available branches
+alias branches=show_all_branches
+
+# show and color code all local branches
+alias blocal=show_local_branches
 
 # git add only updated tracked files (not new files) via patch mode one change at a time
 alias gaps=git_add_updates_patch
@@ -321,7 +312,7 @@ alias grtb=git_remote_tracking_branch
 alias gpod=git_pull_origin_develop
 
 # minimized git log
-alias glog="git log --pretty=format:'%C(yellow)%h %Cred%ad  %Creset%s' --date=local"
+alias glog=minimal_git_log
 
 # git log but the timeline graph version
 alias ggraph='git log --oneline --decorate --graph --all'

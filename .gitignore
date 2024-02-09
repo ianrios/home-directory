@@ -3,9 +3,12 @@
 
 # Except these files
 !*.gitignore
+!*.zprofile
 !*.zsh_aliases
 !*.zsh_kubernetes
+!*.zsh_powerlevel10k
 !*.zshrc
+!*.zsh_colors
 !*README.md
 
 # etc...

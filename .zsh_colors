@@ -1,0 +1,43 @@
+# Colors
+export BLACK='\033[0;30m'
+export DARKGREY='\033[1;30m'
+export RED='\033[0;31m'
+export LIGHTRED='\033[1;31m'
+export GREEN='\033[0;32m'
+export LIGHTGREEN='\033[1;32m'
+export BROWNORANGE='\033[0;33m'
+export YELLOW='\033[1;33m'
+export BLUE='\033[0;34m'
+export LIGHTBLUE='\033[1;34m'
+export PURPLE='\033[0;35m'
+export LIGHTPURPLE='\033[1;35m'
+export CYAN='\033[0;36m'
+export LIGHTCYAN='\033[1;36m'
+export LIGHTGRAY='\033[0;37m'
+export WHITE='\033[1;37m'
+export NC='\033[0m' # No Color
+
+# test colors
+test_colors() {
+    c
+    echo "Testing colors"
+    echo -e "${BLACK}BLACK${NC}"
+    echo -e "${DARKGREY}DARKGREY${NC}"
+    echo -e "${RED}RED${NC}"
+    echo -e "${LIGHTRED}LIGHTRED${NC}"
+    echo -e "${GREEN}GREEN${NC}"
+    echo -e "${LIGHTGREEN}LIGHTGREEN${NC}"
+    echo -e "${BROWNORANGE}BROWNORANGE${NC}"
+    echo -e "${YELLOW}YELLOW${NC}"
+    echo -e "${BLUE}BLUE${NC}"
+    echo -e "${LIGHTBLUE}LIGHTBLUE${NC}"
+    echo -e "${PURPLE}PURPLE${NC}"
+    echo -e "${LIGHTPURPLE}LIGHTPURPLE${NC}"
+    echo -e "${CYAN}CYAN${NC}"
+    echo -e "${LIGHTCYAN}LIGHTCYAN${NC}"
+    echo -e "${LIGHTGRAY}LIGHTGRAY${NC}"
+    echo -e "${WHITE}WHITE${NC}"
+    return
+}
+
+alias tc=test_colors
