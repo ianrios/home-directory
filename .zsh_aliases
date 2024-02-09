@@ -191,14 +191,15 @@ git_add_updates_patch() {
 
     echo -e "If there are changes listed above in green, run ${LIGHTCYAN}gcpo \"with a message\"${NC} to commit and push to your origin branch"
 
-    # commit all new files one at a time
-    echo -e "${YELLOW}Would you like to add new files? (Yes/No)${NC}"
-    read yn
-    case $yn in
-    [Yy]*) git add -N . ;;
-    [Nn]*) echo "Skipped adding new files" ;;
-    *) echo "Please answer yes or no." ;;
-    esac
+    # TODO: check if there are new files to add
+    # # commit all new files one at a time
+    # echo -e "${YELLOW}Would you like to add new files? (Yes/No)${NC}"
+    # read yn
+    # case $yn in
+    # [Yy]*) git add -N . && gaps ;;
+    # [Nn]*) echo "Skipped adding new files" ;;
+    # *) echo "Please answer yes or no." ;;
+    # esac
 
     echo -e "${GREEN}Done${NC}"
 
@@ -273,7 +274,7 @@ welcome() {
 alias a='clear && alias'
 
 # short form source ~/.zshrc
-alias sz='source ~/.zshrc'
+alias sz='c && source ~/.zshrc'
 
 # replace code-insiders with code to easily open new repo
 alias code="code-insiders"

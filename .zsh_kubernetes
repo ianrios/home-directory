@@ -15,3 +15,9 @@ alias k8-connect="test_kubernetes_connectivity"
 alias kns='kubectl ns '
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+plugins=(
+  kube-ps1
+)
+
+PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
