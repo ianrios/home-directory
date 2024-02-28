@@ -136,6 +136,21 @@ git_remote_tracking_branch() {
     return
 }
 
+create_playwright_tests() {
+    # visit https://getbuilt.atlassian.net/wiki/pages/viewpageattachments.action?pageId=3531505717&preview=%2F3531505717%2F3578986750%2FPlaywright-Demo.mp4 to watch the video again
+    npm run test:codegen
+
+    # remind the user to copy the generated code into the test file
+    echo -e "${WHITE}Copy the generated code into the test file${NC}"
+
+    # tell the user to add, commit and push using the aliases
+    echo -e "${WHITE}Run ${LIGHTCYAN}gaps${WHITE} to add the changes${NC} and then ${WHITE}run ${LIGHTCYAN}gcpo \"with a message\"${WHITE} to commit and push to your origin branch${NC}"
+
+    echo -e "${GREEN}Done creating playwright tests${NC}"
+
+    return
+}
+
 # git commit with message, then push to origin
 git_commit_push_origin() {
     # check if git message supplied
@@ -163,8 +178,8 @@ git_commit_push_origin() {
     *) echo "Please answer yes or no." ;;
     esac
 
-    # ask if we want to run tests
-    echo -e "${YELLOW}Would you like to run tests? (Yes/No)${NC}"
+    # ask if we want to run unit tests
+    echo -e "${YELLOW}Would you like to run unit tests? (Yes/No)${NC}"
     read yn
     case $yn in
     [Yy]*) npm run test ;;
@@ -172,7 +187,16 @@ git_commit_push_origin() {
     *) echo "Please answer yes or no." ;;
     esac
 
-    echo -e "${GREEN}Done${NC}"
+    # ask if we want to run unit tests
+    echo -e "${YELLOW}Would you like to run playwright UI tests? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) npm run test:ui ;;
+    [Nn]*) echo "Skipped running tests" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
+    echo -e "${GREEN}Done commiting and pushing to origin${NC}"
 
     return
 }
@@ -337,3 +361,6 @@ alias sso=aws_login_choose_profile
 
 # pull, nvm use, install, and generate schema
 alias prepare=pull_use_install_generate
+
+# create playwright tests
+alias cpw="create_playwright_tests"
