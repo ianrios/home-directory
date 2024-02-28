@@ -125,7 +125,7 @@ git_remote_tracking_branch() {
     # set upstream
     git push -u origin $NEW_BRANCH
     # note for developer to go create new PR right away
-    echo -e "${WHITE}Go create a PR in the repo now in order to save your branch title easilly${NC}"
+    echo -e "${WHITE}Go create a PR in the repo now in order to save your branch title easily${NC}"
     echo -e "${WHITE}Run ${NC}${LIGHTCYAN}open-repo${NC}${WHITE} to access this branch on github.com in the command line${NC}"
 
     # open current branch
