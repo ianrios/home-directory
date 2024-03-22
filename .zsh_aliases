@@ -39,6 +39,8 @@ is_branch_protected() {
     return 1
 }
 
+alias gen="npm run generate"
+
 # git pull origin develop (switch to develop if not already on, then switch back and merge)
 git_pull_origin_develop() {
     # save current branch name
@@ -56,6 +58,15 @@ git_pull_origin_develop() {
         # (it's a simple merge of develop into feature branch, no edit needed)
         git merge develop --no-edit
     fi
+
+    # ask if we want to generate schema
+    echo -e "${YELLOW}Would you like to generate schema? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) gen ;;
+    [Nn]*) echo "Skipped generating schema" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
 
     echo -e "${GREEN}Done${NC}"
 
@@ -207,6 +218,15 @@ git_add_updates_patch() {
     if is_branch_protected; then return; fi
     # we can add to this branch, so continue
 
+    # ask if we want to generate schema
+    echo -e "${YELLOW}Would you like to generate schema? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) gen ;;
+    [Nn]*) echo "Skipped generating schema" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
     # add updated files that are currently tracked via patch mode
     git add -up
 
@@ -233,8 +253,6 @@ git_add_updates_patch() {
 # aws login via granted
 alias ssog="granted sso login --sso-start-url https://d-9067662d10.awsapps.com/start --sso-region us-east-1"
 
-alias gen="npm run generate"
-
 # pull, nvm use, install, and generate schema
 pull_use_install_generate() {
     # pull latest changes
@@ -247,15 +265,6 @@ pull_use_install_generate() {
     echo -e "${PURPLE}Installing latest packages${NC}"
     echo -e "${YELLOW}If this hangs, you need to connect to the VPN via Tunnelblick${NC}"
     npm i
-
-    # ask if we want to generate schema
-    echo -e "${YELLOW}Would you like to generate schema? (Yes/No)${NC}"
-    read yn
-    case $yn in
-    [Yy]*) gen ;;
-    [Nn]*) echo "Skipped generating schema" ;;
-    *) echo "Please answer yes or no." ;;
-    esac
 
     # ask if we want to sso
     echo -e "${YELLOW}Would you like to sso via granted? (Yes/No)${NC}"
