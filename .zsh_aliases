@@ -39,7 +39,11 @@ is_branch_protected() {
     return 1
 }
 
-alias gen="npm run generate"
+# generate schema and run precommit to cleanup any poorly formatted generated files
+gen() {
+    npm run generate
+    npm run precommit
+}
 
 # git pull origin develop (switch to develop if not already on, then switch back and merge)
 git_pull_origin_develop() {
