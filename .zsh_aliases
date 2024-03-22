@@ -43,6 +43,7 @@ is_branch_protected() {
 gen() {
     npm run generate
     npm run precommit
+    return
 }
 
 # git pull origin develop (switch to develop if not already on, then switch back and merge)
