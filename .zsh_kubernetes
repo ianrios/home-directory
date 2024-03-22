@@ -1,9 +1,9 @@
 test_kubernetes_connectivity() {
     aws eks update-kubeconfig \
-        --name us-east-2-workstation \
-        --region us-east-2 \
-        --alias workstation \
-        --profile eksdev
+      --name us-east-2-workstation \
+      --region us-east-2 \
+      --alias workstation \
+      --profile built_dev_eks/BuiltEksDev
 
     kubectl cluster-info
 

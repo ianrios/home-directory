@@ -5,6 +5,9 @@ source ~/.nvm/nvm.sh
 source ~/.zsh_colors
 source ~/.zsh_aliases
 
+export LOCAL="$HOME/.local"
+export PATH="$LOCAL/bin:$PATH"
+
 # load built specific scripts
 source ~/.zsh_kubernetes
 

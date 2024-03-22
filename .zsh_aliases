@@ -230,6 +230,11 @@ git_add_updates_patch() {
     return
 }
 
+# aws login via granted
+alias ssog="granted sso login --sso-start-url https://d-9067662d10.awsapps.com/start --sso-region us-east-1"
+
+alias gen="npm run generate"
+
 # pull, nvm use, install, and generate schema
 pull_use_install_generate() {
     # pull latest changes
@@ -242,15 +247,30 @@ pull_use_install_generate() {
     echo -e "${PURPLE}Installing latest packages${NC}"
     echo -e "${YELLOW}If this hangs, you need to connect to the VPN via Tunnelblick${NC}"
     npm i
-    # generate schema
-    echo -e "${PURPLE}Generating schema${NC}"
-    npm run generate
 
-    # ask if we want to run app
-    echo -e "${YELLOW}Would you like to start the app via ${LIGHTCYAN}npm run start${YELLOW}? (Yes/No)${NC}"
+    # ask if we want to generate schema
+    echo -e "${YELLOW}Would you like to generate schema? (Yes/No)${NC}"
     read yn
     case $yn in
-    [Yy]*) npm run start ;;
+    [Yy]*) gen ;;
+    [Nn]*) echo "Skipped generating schema" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
+    # ask if we want to sso
+    echo -e "${YELLOW}Would you like to sso via granted? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) ssog ;;
+    [Nn]*) echo "Skipped sso" ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+
+    # ask if we want to run app
+    echo -e "${YELLOW}Would you like to start the app via ${LIGHTCYAN}npm run start:local${YELLOW}? (Yes/No)${NC}"
+    read yn
+    case $yn in
+    [Yy]*) npm run start:local ;;
     [Nn]*) echo "Skipped starting app" ;;
     *) echo "Please answer yes or no." ;;
     esac
@@ -347,6 +367,9 @@ alias open-repo="tw git open"
 
 # Built specific
 
+# use python3 instead of python2
+alias python=/usr/bin/python3
+
 # check for npm updates via npx
 alias ncu="npx npm-check-updates"
 
@@ -357,10 +380,15 @@ alias updatebuilt="ncu -u '/^@built/'"
 alias ub="updatebuilt"
 
 # aws login
-alias sso=aws_login_choose_profile
+alias awslcp=aws_login_choose_profile
 
 # pull, nvm use, install, and generate schema
 alias prepare=pull_use_install_generate
 
 # create playwright tests
 alias cpw="create_playwright_tests"
+
+# run playwright tests
+alias rpw="npm run test:ui"
+
+alias upgrade-awslogin="python -m pip install --index-url https://infrastructure.getbuilt.com/nexus/repository/pypi/simple --user --upgrade awslogin"
